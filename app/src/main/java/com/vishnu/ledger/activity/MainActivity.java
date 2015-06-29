@@ -34,6 +34,7 @@ import android.widget.Button;
 
 import com.vishnu.ledger.R;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
@@ -44,14 +45,14 @@ public class MainActivity extends Activity {
     @InjectView(R.id.creditButton) Button creditButton;
 
     @OnClick(R.id.debitButton)
-    private void debitAmount()
+    public void debitAmount()
     {
         Intent debitActivity = new Intent(MainActivity.this, DebitActivity.class);
         startActivity(debitActivity);
     }
 
     @OnClick(R.id.creditButton)
-    private void creditAmount()
+    public void creditAmount()
     {
         Intent debitActivity = new Intent(MainActivity.this, CreditActivity.class);
         startActivity(debitActivity);
@@ -62,6 +63,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
     }
 
     @Override
