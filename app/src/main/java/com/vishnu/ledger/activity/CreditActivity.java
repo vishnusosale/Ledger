@@ -35,28 +35,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TimePicker;
 
 import com.vishnu.ledger.R;
 
 import java.util.Calendar;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class CreditActivity extends Activity {
 
-    static final int TIME_DIALOG_ID = 1111;
-
-    private int hour;
-    private int minute;
-    @InjectView(R.id.creditAddTimeButton)Button creditAddTimeButton;
-    @InjectView(R.id.creditAddDateButton)Button creditAddDateButton;
+    @Bind(R.id.creditAddTimeButton)Button creditAddTimeButton;
+    @Bind(R.id.creditAddDateButton)Button creditAddDateButton;
+    @Bind(R.id.creditPayMethodRadioGroup)RadioGroup creditPayMethodRadioGroup;
+    @Bind(R.id.creditCardRadioButton)RadioButton creditCardRadioButton;
+    @Bind(R.id.creditCashRadioButton)RadioButton creditCashRadioButton;
+    @Bind(R.id.creditChequeRadioButton)RadioButton creditChequeRadioButton;
+    @Bind(R.id.creditSalaryRadioButton)RadioButton creditSalaryRadioButton;
 
     @OnClick(R.id.creditAddDateButton)
-    public void addDate()
-    {
+    public void addDate() {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
     }
@@ -64,61 +66,19 @@ public class CreditActivity extends Activity {
     @OnClick(R.id.creditAddTimeButton)
     public void addTime() {
         DialogFragment newFragment = new TimePickerFragment();
-
         newFragment.show(getFragmentManager(), "timePicker");
     }
-
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
-        }
-    }
-
-    public static class TimePickerFragment extends DialogFragment
-            implements TimePickerDialog.OnTimeSetListener {
-
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current time as the default values for the picker
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-
-            // Create a new instance of TimePickerDialog and return it
-            return new TimePickerDialog(getActivity(), this, hour, minute,
-                    DateFormat.is24HourFormat(getActivity()));
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            // Do something with the time chosen by the user
-        }
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credit);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
+
+        int selectedId = creditPayMethodRadioGroup.getCheckedRadioButtonId();
 
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -140,5 +100,53 @@ public class CreditActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+            String dateString = day + "/" + month + "/" + year;
+            Button b = (Button) getActivity().findViewById(R.id.creditAddDateButton);
+            b.setText(dateString);
+
+        }
+    }
+
+    public static class TimePickerFragment extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            // Do something with the time chosen by the user
+            String timeString = hourOfDay + ":" + minute;
+            Button b = (Button) getActivity().findViewById(R.id.creditAddTimeButton);
+            b.setText(timeString);
+        }
     }
 }

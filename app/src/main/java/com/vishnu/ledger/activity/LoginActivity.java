@@ -25,51 +25,53 @@
 package com.vishnu.ledger.activity;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthToken;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.vishnu.ledger.R;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
+public class LoginActivity extends Activity {
 
-public class MainActivity extends Activity {
-
-    @Bind(R.id.debitButton) Button debitButton;
-    @Bind(R.id.creditButton) Button creditButton;
-
-    @OnClick(R.id.debitButton)
-    public void debitAmount()
-    {
-        Intent debitActivity = new Intent(MainActivity.this, DebitActivity.class);
-        startActivity(debitActivity);
-    }
-
-    @OnClick(R.id.creditButton)
-    public void creditAmount()
-    {
-        Intent debitActivity = new Intent(MainActivity.this, CreditActivity.class);
-        startActivity(debitActivity);
-    }
+    TwitterLoginButton loginButton;
+    TwitterSession session;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_login);
+
+        loginButton = (TwitterLoginButton) findViewById(R.id.loginButton);
+        loginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+                TwitterAuthToken authToken = session.getAuthToken();
+                String token = authToken.token;
+                String secret = authToken.secret;
+            }
+            @Override
+            public void failure(TwitterException e) {
+
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_login, menu);
         return true;
     }
 
